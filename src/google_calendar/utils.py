@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import timedelta
+from core.app_state import app_state
 
 load_dotenv()
 
@@ -13,7 +14,7 @@ CALENDAR_LIST = [
 ]
 
 def get_datetime():
-    now = datetime.now()
+    now = app_state.now
 
     time_min = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat() + "Z"
 
@@ -31,6 +32,4 @@ def get_datetime():
         hour=0, minute=0, second=0, microsecond=0
     ).isoformat() + "Z"
 
-    date_file = now.strftime("%Y-%m-%d_%H-%M")
-
-    return date_file, time_min, time_max
+    return time_min, time_max

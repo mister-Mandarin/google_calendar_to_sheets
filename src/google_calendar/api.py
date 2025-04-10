@@ -1,12 +1,13 @@
 from core.create_file import File
 from core.compare_file import CompareFiles
 from google_calendar.utils import get_datetime
+from core.app_state import app_state
 
 class CalendarAPI:
-    def __init__(self, service, calendar):
-        self.service = service
+    def __init__(self, calendar):
+        self.service = app_state.calendar_service
         self.calendar_data = calendar
-        self.date_file, self.time_min, self.time_max = get_datetime()
+        self.time_min, self.time_max = get_datetime()
 
     # Добавляет существующий календарь в список календарей пользователя
     def add_calendar(self):
@@ -33,7 +34,7 @@ class CalendarAPI:
         events_result = self.get_full_events()
 
         file_obj = File()
-        file_obj.write_file(self.calendar_data, events_result, self.date_file)
+        file_obj.write_file(self.calendar_data, events_result)
 
     def get_full_events(self):
         return self.service.events().list(

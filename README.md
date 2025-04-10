@@ -39,3 +39,8 @@ google_calendar_to_sheets/
 └── README.md
 
 ```
+
+### Help links calendar
+https://developers.google.com/workspace/calendar/api/v3/reference/events/list 
+https://developers.google.com/workspace/calendar/api/guides/sync 
+https://developers.google.com/workspace/calendar/api/guides/performance 
