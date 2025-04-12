@@ -16,7 +16,7 @@ class Auth:
         )
         self.services = {
             "calendar": build("calendar", "v3", credentials=credentials),
-            "sheets": build("sheets", "v4", credentials=credentials)
+            "table": build("sheets", "v4", credentials=credentials)
         }
 
     def get_service(self, name):

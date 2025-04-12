@@ -8,9 +8,39 @@ load_dotenv()
 CALENDAR_LIST = [
     {
         "id": os.getenv("BIG120"),
+        "name": "Зал 120/Классика",
         "summary": "Зал 120 кв.м. Центр Альфа-Зет м. Достоевская",
-        "alias": 'big120'
+        "alias": 'big120',
+        "backgroundColor": "3F51B5", # черника/синий
     },
+    {
+        "id": os.getenv("BIG90"),
+        "name": "Зал 90/Эзотерика",
+        "summary": "Зал в эзотерическом стиле со статуей медитируюшего Будды и возможностью цветного освещения.",
+        "alias": 'big90',
+        "backgroundColor": "039BE5", # павлин/голубой
+    },
+        {
+        "id": os.getenv("MEDIUM60"),
+        "name": "Зал 60/Романтика",
+        "summary": "Прямоугольный зал с фантазийными элементами в оформлении.",
+        "alias": 'medium60',
+        "backgroundColor": "D50000", # помидор/красный
+    },
+    {
+        "id": os.getenv("SMALL30"),
+        "name": "Малый зал 30/Практика",
+        "summary": "Небольшой зал для мини-групп и индивидуальных сессий.",
+        "alias": 'small30',
+        "backgroundColor": "7CB342", # фисташка/зеленый
+    },
+    {
+        "id": os.getenv("SMALL16"),
+        "name": "Кабинет 16/Массаж",
+        "summary": "С кушеткой и местом для беседы с клиентом.",
+        "alias": 'small16',
+        "backgroundColor": "F6BF26", # банан/желтый
+    }
 ]
 
 def get_datetime():

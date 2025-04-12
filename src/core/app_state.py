@@ -3,15 +3,15 @@ from typing import Any
 from datetime import datetime
 from core.auth import Auth
 
-@dataclass(frozen=True)
+@dataclass
 class AppState:
     now: str = datetime.now()
-    sheets_service: Any
-    calendar_service: Any
+    sheet_service: Any = field(init=False)
+    calendar_service: Any = field(init=False)
 
     def __post_init__(self):
         auth = Auth()
-        self.sheets_service = auth.get_service("sheets")
+        self.sheet_service = auth.get_service("table")
         self.calendar_service = auth.get_service("calendar")
     
 # Инициализируем глобальный экземпляр
