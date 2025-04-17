@@ -6,7 +6,6 @@ from core.app_state import app_state
 class File:
     def __init__(self):
         self.data_dir = Path(__file__).parent.parent.parent / 'data'
-        self.data_dir.mkdir(exist_ok=True)
 
     def write_file(self, calendar_data, events):
         file_name = f"{calendar_data["alias"]}_{app_state.now.strftime("%Y-%m-%d_%H-%M")}.json"

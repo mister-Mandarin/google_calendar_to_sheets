@@ -1,17 +1,23 @@
 
 from google_calendar.utils import CALENDAR_LIST
 from core.app_state import app_state
-from google_sheet.utils import MONTHS, TIME_INTERVAL, get_month_info
+from google_sheet.utils import MONTHS_DAYS, TIME_INTERVAL, get_month_info
 
 class SetupSheet:
     def __init__(self):
         self.sheet_id = 1165124638
-        self.requests = []
+        self.requests_first = []
+        self.requests_second = []
 
-    # 
+    '''
+    Скрываем столбцы !(с 7 по 27 в интерфейсе)
+    Выставляем ширину столбцов
+    Названия в 1 строке
+    Закрепляем и рамка 1 строка и 1 столбец
+    '''
     def first_setup_sheet(self):
         # скрыть столбцы !(с 7 по 27 в интерфейсе)
-        self.requests.append({
+        self.requests_first.append({
             'updateDimensionProperties': {
                 "range": {
                     "sheetId": self.sheet_id,
@@ -27,7 +33,7 @@ class SetupSheet:
 
         # выставляем шиирну столбцов
         for i in range(0, CALENDAR_LIST.__len__() + 1):
-            self.requests.append({
+            self.requests_first.append({
                 'updateDimensionProperties': {
                     "range": {
                         "sheetId": self.sheet_id,
@@ -45,7 +51,7 @@ class SetupSheet:
         # В 1 строке заполняем названия залов
         # заливаем ячейки фоном
         for calendar in CALENDAR_LIST:
-            self.requests.append({
+            self.requests_first.append({
                 "updateCells": {
                     "rows": [
                         {
@@ -76,7 +82,7 @@ class SetupSheet:
             })
     
         # Закрепляем первую строку и столбец
-        self.requests.append({
+        self.requests_first.append({
             "updateSheetProperties": {
                 "properties": {
                     "sheetId": self.sheet_id,
@@ -88,45 +94,78 @@ class SetupSheet:
                 "fields": "gridProperties.frozenRowCount,gridProperties.frozenColumnCount"
             }
         })
-    
-    # Заполнение ОДНОГО дня недели
-    # Занимает 28 строк!
-    def second_setup_sheet(self):
-        start_row = 29 # 28 строк + 1 строка с названием дня
-        start_col = 1
-        day = 2
-        day_name = f"{day} {MONTHS[app_state.now.month]}, {get_month_info()['first_weekday']}"
-        
-        # Объединение ячеек первой строки дня
-        self.requests.append({
-                "mergeCells": {
-                    "range": {
-                        "sheetId": self.sheet_id,
-                        "startRowIndex": start_row,
-                        "endRowIndex": start_row + 1,
-                        "startColumnIndex": start_col,
-                        "endColumnIndex": start_col + 5
-                    },
-                    "mergeType": "MERGE_ALL"
-                }
-            })
-            
-        # Вставка текста с названием дня недели
-        self.requests.append({
-            "updateCells": {
-                "rows": [
-                    {
-                        "values": [
-                            {
-                                "userEnteredValue": {"stringValue": day_name},
-                                "userEnteredFormat": {
-                                    "horizontalAlignment": "CENTER",
-                                    "textFormat": {"bold": True}
-                                }
+
+        # Первый столбец фон
+        self.requests_first.append({
+            "repeatCell": {
+                "range": {
+                    "sheetId": self.sheet_id,
+                    "startColumnIndex": 0, 
+                    "endColumnIndex": 1
+                },
+                "cell": {
+                    "userEnteredFormat": {
+                        "backgroundColorStyle": {
+                            "rgbColor": {
+                                "red": int('ff', 16) / 255,
+                                "green": int('f2', 16) / 255,
+                                "blue": int('cc', 16) / 255,
                             }
-                        ]
+                        }
                     }
-                ],
+                },
+                "fields": "userEnteredFormat.backgroundColorStyle"
+            }
+        })
+    
+        # Рамка первая строка и столбец
+        border_style = {
+            "style": "SOLID",
+            "width": 1,
+            "color": {"red": 0, "green": 0, "blue": 0}
+        }
+
+        self.requests_first.append({
+            "updateBorders": {
+                "range": {
+                    "sheetId": self.sheet_id,
+                    "startRowIndex": 0,
+                    "endRowIndex": 1,
+                },
+                "innerHorizontal": border_style,
+                "innerVertical": border_style
+            }
+        })
+
+        self.requests_first.append({
+            "updateBorders": {
+                "range": {
+                    "sheetId": self.sheet_id,
+                    "startColumnIndex": 0,
+                    "endColumnIndex": 1
+                },
+                "bottom": border_style,
+                "right": border_style,
+                "innerHorizontal": border_style
+            }
+        })
+
+    # Заполнение ОДНОГО дня недели
+    # Занимает всего 31 строку!
+    def second_setup_sheet(self):
+        start_row = 1 #1/31/61
+        day = 4
+        day_name = f"{day} {MONTHS_DAYS[app_state.now.month]}, {get_month_info()['first_weekday']}"
+        
+        # Объединение ячеек первой строки дня и рамка
+        border_style = {
+            "style": "SOLID",
+            "width": 1,
+            "color": {"red": 0, "green": 0, "blue": 0}
+        }
+
+        self.requests_second.append({
+            "mergeCells": {
                 "range": {
                     "sheetId": self.sheet_id,
                     "startRowIndex": start_row,
@@ -134,32 +173,78 @@ class SetupSheet:
                     "startColumnIndex": 1,
                     "endColumnIndex": 6
                 },
-                "fields": "userEnteredValue,userEnteredFormat"
+                "mergeType": "MERGE_ALL"
+            }
+        })
+        self.requests_second.append({
+            "updateBorders": {
+                "range": {
+                    "sheetId": self.sheet_id,
+                    "startRowIndex": start_row,
+                    "endRowIndex": start_row + 1,
+                    "startColumnIndex": 1,
+                    "endColumnIndex": 6
+                },
+                "top": border_style,
+                "bottom": border_style,
+                "left": border_style,
+                "right": border_style
+            }
+        })
+
+        # Правая рамка в последнем столбце
+        self.requests_second.append({
+            "updateBorders": {
+                "range": {
+                    "sheetId": self.sheet_id,
+                    "startColumnIndex": 5,
+                    "endColumnIndex": 6
+                },
+                "right": border_style
+            }
+        })
+
+        # Вставка текста с названием дня недели
+        self.requests_second.append({
+            "repeatCell": {
+                "range": {
+                    "sheetId": self.sheet_id,
+                    "startRowIndex": start_row,
+                    "endRowIndex": start_row + 1,
+                    "startColumnIndex": 1,
+                    "endColumnIndex": 6
+                },
+                "cell": {
+                    "userEnteredValue": {"stringValue": day_name},
+                    "userEnteredFormat": {
+                        "horizontalAlignment": "CENTER",
+                        "textFormat": {"bold": True}
+                    }
+                },
+                "fields": "userEnteredValue,userEnteredFormat(horizontalAlignment,textFormat)"
             }
         })
 
         # Заполнение столбца времени
         for time in TIME_INTERVAL:
-            self.requests.append({
-                "updateCells": {
-                    "rows": [
-                        {
-                            "values": [
-                                {
-                                    "userEnteredValue": {"stringValue": time},
-                                    "userEnteredFormat": {
-                                        "horizontalAlignment": "CENTER",
-                                        "textFormat": {"fontSize": 9}
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    "start": {
+            self.requests_second.append({
+                "repeatCell": {
+                    "range": {
                         "sheetId": self.sheet_id,
-                        "rowIndex": start_row + 1 + TIME_INTERVAL.index(time),
-                        "columnIndex": 0
+                        "startRowIndex": start_row + 1 + TIME_INTERVAL.index(time),
+                        "endRowIndex": start_row + 2 + TIME_INTERVAL.index(time),
+                        "startColumnIndex": 0,
+                        "endColumnIndex": 1
                     },
-                    "fields": "userEnteredValue,userEnteredFormat"
+                    "cell": {
+                        "userEnteredValue": {"stringValue": time},
+                        "userEnteredFormat": {
+                            "horizontalAlignment": "CENTER",
+                            "textFormat": {
+                                "fontSize": 9
+                            }
+                        }
+                    },
+                    "fields": "userEnteredValue,userEnteredFormat(textFormat,horizontalAlignment)"
                 }
             })

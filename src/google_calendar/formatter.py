@@ -1,7 +1,9 @@
+from core.utils import stable_hash
+
 def format_event(raw_events):
     events_items = raw_events.get("items", [])
     events = {
-        "syncToken": hash(raw_events.get("updated")),
+        "syncToken": stable_hash(raw_events.get("updated")),
         "items": []
     }
 
