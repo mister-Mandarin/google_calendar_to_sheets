@@ -1,20 +1,17 @@
 
 from google_calendar.utils import CALENDAR_LIST
-from core.app_state import app_state
-from google_sheet.utils import MONTHS_DAYS, TIME_INTERVAL, get_month_info
+from google_sheet.utils import TIME_INTERVAL
 
 class SetupSheet:
-    def __init__(self):
-        self.sheet_id = 1165124638
+    def __init__(self, sheet_id):
+        self.sheet_id = sheet_id
         self.requests_first = []
         self.requests_second = []
 
-    '''
-    Скрываем столбцы !(с 7 по 27 в интерфейсе)
-    Выставляем ширину столбцов
-    Названия в 1 строке
-    Закрепляем и рамка 1 строка и 1 столбец
-    '''
+    # Скрываем столбцы !(с 7 по 27 в интерфейсе)
+    # Выставляем ширину столбцов
+    # Названия в 1 строке
+    # Закрепляем и рамка 1 строка и 1 столбец
     def first_setup_sheet(self):
         # скрыть столбцы !(с 7 по 27 в интерфейсе)
         self.requests_first.append({
@@ -152,10 +149,8 @@ class SetupSheet:
 
     # Заполнение ОДНОГО дня недели
     # Занимает всего 31 строку!
-    def second_setup_sheet(self):
-        start_row = 1 #1/31/61
-        day = 4
-        day_name = f"{day} {MONTHS_DAYS[app_state.now.month]}, {get_month_info()['first_weekday']}"
+    def second_setup_sheet(self, start_row, day_name):
+        #start_row 1/31/61
         
         # Объединение ячеек первой строки дня и рамка
         border_style = {

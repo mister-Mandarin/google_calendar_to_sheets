@@ -22,7 +22,7 @@ class AppState:
         self._load_sheets_cache()
         self.logger = AppLogger(name="app", log_dir=self.data_dir).get_logger()
         self.logger.info("__________________________________________________________")
-        self.logger.debug(f"AppState initialized at {self.now}.")
+        self.logger.debug(f"Запуск {self.now}.")
 
     def _init_services(self):
         auth = Auth()
@@ -30,7 +30,6 @@ class AppState:
         self.calendar_service = auth.get_service("calendar")
     
     def _init_data_dir(self):
-        #self.data_dir = Path(__file__).parent.parent.parent / 'data'
         self.data_dir.mkdir(exist_ok=True)
 
     def _load_sheets_cache(self):
@@ -39,6 +38,15 @@ class AppState:
                 self.sheets_cache = json.load(f)
         except FileNotFoundError:
             self.sheets_cache = []
+
+    def _save_sheets_cache(self, sheets_cache):
+        try:
+            with open(self.data_dir / self.sheets_cache_file, "w", encoding="utf-8") as f:
+                json.dump(sheets_cache, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            self.logger.error(f"Ошибка при сохранении sheets_cache: {e}")
+        
+        self._load_sheets_cache()
 
 # Инициализируем глобальный экземпляр
 app_state = AppState()

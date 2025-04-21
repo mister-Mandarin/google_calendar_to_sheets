@@ -1,9 +1,9 @@
 from core.app_state import app_state
 from dotenv import load_dotenv
-from .utils import MONTHS
+from .utils import MONTHS, MONTHS_DAYS, WEEKDAYS, get_month_info
+from datetime import datetime
 from google_sheet.setup_sheet import SetupSheet
 import os
-import json
 
 load_dotenv()
 
@@ -11,57 +11,80 @@ class SheetAPI:
     def __init__(self):
         self.service = app_state.sheet_service
         self.table_id = os.getenv("TABLE_ID")
+        self.logger = app_state.logger
+        self.sheet = None
         self.requests = []
-        
-    def list_sheets(self):
-        sheets_data = self.service.spreadsheets().get(
+    
+    def request(self, request):
+        self.service.spreadsheets().batchUpdate(
+            spreadsheetId=self.table_id,
+            body={"requests": request}
+        ).execute()
+
+    def get_list_sheets(self):
+        return self.service.spreadsheets().get(
             spreadsheetId=self.table_id,
             fields="sheets.properties(sheetId,title)"
         ).execute()["sheets"]
+    
+    def get_month_name_from_iso(self, iso_string):
+        dt = datetime.fromisoformat(iso_string)
+        return f"{MONTHS[dt.month]}_{dt.year}"
 
-        with open(app_state.sheets_cache_file, "w", encoding="utf-8") as f:
-            json.dump(sheets_data, f, ensure_ascii=False, indent=2)
-        '''
-        {'sheets': 
-            ...
-            {'properties': {'sheetId': 1165124638, 'title': 'Апрель 2025'}}]}
-        '''
-
-    def create_monthly_sheet(self):
-        month_name = f"{MONTHS[app_state.now.month]} {app_state.now.year}"
-
-        print('month_name', month_name)
+    def find_sheet_in_cache(self, month_name):
+        #self.logger.debug(f"Поиск листа {month_name} в кэше")
         
         for sheet in app_state.sheets_cache:
             if month_name == sheet['properties']['title']:
-                print('exists')
-                return
-
-        print('not exists')
+                #self.logger.info(f"Лист {month_name} существует.")
+                return sheet['properties']
         
-        # requests = [{
-        #     "addSheet": {
-        #         "properties": {
-        #             "title": month_name
-        #         }
-        #     }
-        # }]
+        self.logger.debug(f"Лист {month_name} не существует.")
+        return None
+       
+    def create_new_sheet(self, month_name):
+        #self.logger.info(f"Создаю новый лист, перезаписываю кэш.")
+        requests = [{
+            "addSheet": {
+                "properties": {
+                    "title": month_name
+                }
+            }
+        }]
 
-        # self.service.spreadsheets().batchUpdate(
-        #     spreadsheetId=self.table_id,
-        #     body={"requests": requests}
-        # ).execute()
+        self.request(requests)
+        
+    def update_sheet_state(self):
+        app_state._save_sheets_cache(self.get_list_sheets())
     
-    def setup_new_sheet(self):
-        pass
+    def setup_new_sheet(self, sheet):
+        self.logger.info(f"Настраиваю новый лист {sheet['title']}")
 
-    def test_test(self):
-        from google_sheet.setup_sheet import SetupSheet
-        setup = SetupSheet()
-        #setup.first_setup_sheet()
-        setup.second_setup_sheet()
-        self.service.spreadsheets().batchUpdate(
-                    spreadsheetId=self.table_id,
-                    #body={"requests": setup.requests_first}
-                    body={"requests": setup.requests_second}
-                ).execute()
+        setup = SetupSheet(sheet['sheetId'])
+        setup.first_setup_sheet()
+        self.request(setup.requests_first)
+
+        # Узнать месяц, первый день недели, количество дней
+        month = MONTHS_DAYS[MONTHS.index(sheet['title'].split("_")[0])]
+        first_weekday_number, total_days = get_month_info(sheet['title'])
+
+        for i in range(total_days):
+            day_number = i + 1
+            weekday_name = WEEKDAYS[(first_weekday_number + i) % 7]
+            full_day_string = f"{day_number} {month}, {weekday_name}"
+            start_row = 1 + (i * 30)
+            setup.second_setup_sheet(start_row, full_day_string)
+
+        self.request(setup.requests_second)
+
+    def get_sheet_id(self, data):
+        month_name = self.get_month_name_from_iso(data)
+        find_sheet = self.find_sheet_in_cache(month_name)
+
+        if not find_sheet:
+            self.create_new_sheet(month_name)
+            self.update_sheet_state()
+            find_sheet = self.find_sheet_in_cache(month_name)
+            self.setup_new_sheet(find_sheet)
+
+        return find_sheet
