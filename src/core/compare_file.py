@@ -11,18 +11,18 @@ class CompareFiles:  # true / false
         self.list_files = list(self.data_dir.glob(f"{self.calendar_alias}_*.json"))
 
         if not self.list_files:
-            self.logger.info(f"Для календаря {self.calendar_alias} не найдено файлов данных.")
+            #self.logger.info(f"Для календаря {self.calendar_alias} не найдено файлов данных.")
             return
         else:
             self.valid = True
             self.latest_young_file = max(self.list_files, key=lambda f: f.stat().st_mtime)
-            self.logger.debug(f"Найден последний файл: {self.latest_young_file.name}")
+            #self.logger.debug(f"Найден последний файл: {self.latest_young_file.name}")
 
     def load_sync_token(self, path):
         try:
             with open(path, "r") as f:
                 token = json.load(f).get("syncToken")
-                self.logger.debug(f"Загружен syncToken из {path.name}: {token}")
+                #self.logger.debug(f"Загружен syncToken из {path.name}: {token}")
                 return token
         except Exception as e:
             self.logger.error(f"Ошибка при загрузке syncToken из {path.name}: {e}")
