@@ -14,6 +14,7 @@ class AppState:
     sheets_cache: Any = field(init=False)
     sheets_cache_file: str = "cached_sheets.json"
     data_dir: Path = Path(__file__).parent.parent.parent / 'data'
+    list_changed_calendars: Any = field(default_factory=list)
     logger: Any = field(init=False)
 
     def __post_init__(self):

@@ -2,7 +2,7 @@
 from google_calendar.utils import CALENDAR_LIST
 from google_sheet.utils import TIME_INTERVAL
 
-class SetupSheet:
+class SetupNewSheet:
     def __init__(self, sheet_id):
         self.sheet_id = sheet_id
         self.requests_first = []

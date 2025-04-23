@@ -2,7 +2,7 @@ from core.app_state import app_state
 from dotenv import load_dotenv
 from .utils import MONTHS, MONTHS_DAYS, WEEKDAYS, get_month_info
 from datetime import datetime
-from google_sheet.setup_sheet import SetupSheet
+from google_sheet.setup_new_sheet import SetupNewSheet
 import os
 
 load_dotenv()
@@ -53,14 +53,35 @@ class SheetAPI:
         }]
 
         self.request(requests)
-        
+
+    def parse_sheets_to_dict(self, list_of_sheets): 
+        sheets_dict = {}
+        for sheet in list_of_sheets:
+            try:
+                props = sheet.get('properties', {})
+                title = props.get('title', '')
+                month = MONTHS.index(title.split("_")[0])
+                year = title.split("_")[1]
+                key = f"{year}-{month:02}"
+
+                sheets_dict[key] = {
+                    "sheetId": props["sheetId"],
+                    "title": title
+                }
+            except (IndexError, ValueError):
+                continue
+
+        return sheets_dict
+
     def update_sheet_state(self):
-        app_state._save_sheets_cache(self.get_list_sheets())
+        list = self.get_list_sheets()
+        new_list = self.parse_sheets_to_dict(list)
+        app_state._save_sheets_cache(new_list)
     
     def setup_new_sheet(self, sheet):
         self.logger.info(f"Настраиваю новый лист {sheet['title']}")
 
-        setup = SetupSheet(sheet['sheetId'])
+        setup = SetupNewSheet(sheet['sheetId'])
         setup.first_setup_sheet()
         self.request(setup.requests_first)
 
@@ -81,10 +102,11 @@ class SheetAPI:
         month_name = self.get_month_name_from_iso(data)
         find_sheet = self.find_sheet_in_cache(month_name)
 
-        if not find_sheet:
-            self.create_new_sheet(month_name)
-            self.update_sheet_state()
-            find_sheet = self.find_sheet_in_cache(month_name)
-            self.setup_new_sheet(find_sheet)
+        if find_sheet:
+            return find_sheet
 
-        return find_sheet
+        self.create_new_sheet(month_name)
+        self.update_sheet_state()
+        sheet = self.find_sheet_in_cache(month_name)
+        self.setup_new_sheet(sheet)
+        return sheet

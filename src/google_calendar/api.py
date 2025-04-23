@@ -40,8 +40,8 @@ class CalendarAPI:
         comparator = CompareFiles(self.calendar_data)
         
         if comparator.valid:
-            sync_token = self.get_sync_token()
-            result = comparator.compare_files(sync_token)
+            new_sync_token = self.get_sync_token()
+            result = comparator.compare_files(new_sync_token)
 
             if result:
                 self.logger.info(f"{self.calendar_data['alias']} не требует синхронизации.")

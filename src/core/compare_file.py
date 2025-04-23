@@ -28,17 +28,15 @@ class CompareFiles:  # true / false
             self.logger.error(f"Ошибка при загрузке syncToken из {path.name}: {e}")
             return None
 
-    def delete_old_files(self, path):
+    def delete_old_files(self):
         for file in self.list_files:
-            if file != path:
-                try:
-                    file.unlink()
-                    #self.logger.debug(f"Удалён устаревший файл: {file.name}")
-                except Exception as e:
-                    self.logger.error(f"Ошибка при удалении {file.name}: {e}")
+            try:
+                file.unlink()
+                #self.logger.debug(f"Удалён устаревший файл: {file.name}")
+            except Exception as e:
+                self.logger.error(f"Ошибка при удалении {file.name}: {e}")
 
     def compare_files(self, new_sync_token):
-        self.delete_old_files(self.latest_young_file)
         old_sync_token = self.load_sync_token(self.latest_young_file)
 
         if old_sync_token == new_sync_token:
@@ -46,5 +44,7 @@ class CompareFiles:  # true / false
             return True
         else:
             self.logger.info(f"Токены различаются для {self.calendar_alias}. Требуется полная синхронизация.")
+            app_state.list_changed_calendars.append(self.calendar_alias)
+            self.delete_old_files()
             return False
         

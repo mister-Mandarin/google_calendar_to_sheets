@@ -11,35 +11,40 @@ CALENDAR_LIST = [
         "name": "Зал 120/Классика",
         "summary": "Зал 120 кв.м. Центр Альфа-Зет м. Достоевская",
         "alias": 'big120',
-        "backgroundColor": "3F51B5", # черника/синий
+        "backgroundColor": "a4c2f4", # "3F51B5" черника/синий
+        "colorList": ["A4C2F4", "BCD3FA", "CDDDFA", "355C9F", "8A9BB7"]
     },
     {
         "id": os.getenv("BIG90"),
         "name": "Зал 90/Эзотерика",
         "summary": "Зал в эзотерическом стиле со статуей медитируюшего Будды и возможностью цветного освещения.",
         "alias": 'big90',
-        "backgroundColor": "039BE5", # павлин/голубой
+        "backgroundColor": "b4a7d6", # "039BE5" павлин/голубой
+        "colorList": ["B4A7D6", "C4A2D3", "CFC4EB", "DDC0E9", "E0CBE9"]
     },
         {
         "id": os.getenv("MEDIUM60"),
         "name": "Зал 60/Романтика",
         "summary": "Прямоугольный зал с фантазийными элементами в оформлении.",
         "alias": 'medium60',
-        "backgroundColor": "D50000", # помидор/красный
+        "backgroundColor": "ea9999", # "D50000" помидор/красный
+        "colorList": ["EA9999", "F4B5B5", "F4C6C6", "B08282", "DDB3CB"]
     },
     {
         "id": os.getenv("SMALL30"),
         "name": "Малый зал 30/Практика",
         "summary": "Небольшой зал для мини-групп и индивидуальных сессий.",
         "alias": 'small30',
-        "backgroundColor": "7CB342", # фисташка/зеленый
+        "backgroundColor": "b6d7a8", # "7CB342" фисташка/зеленый
+        "colorList": ["B6D7A8", "D0EBC4", "8FA187", "EFF6D9", "D7EBCF"]
     },
     {
         "id": os.getenv("SMALL16"),
         "name": "Кабинет 16/Массаж",
         "summary": "С кушеткой и местом для беседы с клиентом.",
         "alias": 'small16',
-        "backgroundColor": "F6BF26", # банан/желтый
+        "backgroundColor": "ffe599", # "F6BF26" банан/желтый
+        "colorList": ["FFE599", "FFEBB3", "FFF1C7", "BFBA86", "FFF0C6"]
     }
 ]
 
