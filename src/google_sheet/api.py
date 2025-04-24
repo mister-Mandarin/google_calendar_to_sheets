@@ -13,7 +13,6 @@ class SheetAPI:
         self.table_id = os.getenv("TABLE_ID")
         self.logger = app_state.logger
         self.sheet = None
-        self.requests = []
     
     def request(self, request):
         self.service.spreadsheets().batchUpdate(
@@ -27,20 +26,19 @@ class SheetAPI:
             fields="sheets.properties(sheetId,title)"
         ).execute()["sheets"]
     
-    def get_month_name_from_iso(self, iso_string):
-        dt = datetime.fromisoformat(iso_string)
+    def get_month_name_from_iso(self, date_month):
+        dt = datetime.strptime(date_month, "%Y-%m")
         return f"{MONTHS[dt.month]}_{dt.year}"
 
     def find_sheet_in_cache(self, month_name):
         #self.logger.debug(f"Поиск листа {month_name} в кэше")
         
-        for sheet in app_state.sheets_cache:
-            if month_name == sheet['properties']['title']:
-                #self.logger.info(f"Лист {month_name} существует.")
-                return sheet['properties']
+        if month_name in app_state.sheets_cache:
+            #self.logger.info(f"Лист {month_name} существует.")
+            return app_state.sheets_cache[month_name]
         
         self.logger.debug(f"Лист {month_name} не существует.")
-        return None
+        return False
        
     def create_new_sheet(self, month_name):
         #self.logger.info(f"Создаю новый лист, перезаписываю кэш.")
@@ -98,15 +96,14 @@ class SheetAPI:
 
         self.request(setup.requests_second)
 
-    def get_sheet_id(self, data):
-        month_name = self.get_month_name_from_iso(data)
+    def get_sheet_id(self, month_name):
         find_sheet = self.find_sheet_in_cache(month_name)
 
         if find_sheet:
-            return find_sheet
+            return
 
-        self.create_new_sheet(month_name)
+        name = self.get_month_name_from_iso(month_name)
+        self.create_new_sheet(name)
         self.update_sheet_state()
         sheet = self.find_sheet_in_cache(month_name)
         self.setup_new_sheet(sheet)
-        return sheet
