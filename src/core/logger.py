@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 class AppLogger:
     def __init__(self, name, log_dir):

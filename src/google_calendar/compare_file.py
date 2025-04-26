@@ -1,4 +1,3 @@
-from pathlib import Path
 from core.app_state import app_state
 import json
 

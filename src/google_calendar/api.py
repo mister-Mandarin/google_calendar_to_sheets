@@ -1,5 +1,5 @@
 from core.create_file import File
-from core.compare_file import CompareFiles
+from google_calendar.compare_file import CompareFiles
 from google_calendar.utils import get_datetime
 from core.app_state import app_state
 from core.utils import stable_hash
