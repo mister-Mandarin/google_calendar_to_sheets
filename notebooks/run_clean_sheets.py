@@ -4,7 +4,7 @@ from core.app_state import app_state
 from itertools import pairwise
 
 # Пример состояния    
-# list_changed_calendars = ['big90', 'medium60', 'small16']
+# list_changed_calendars = ['big120', 'big90', 'medium60', 'small16']
 
 def get_id_from_cache(data):
   """Получить данные листа из кэша"""
@@ -20,9 +20,6 @@ def get_id_table(sheet_dates_ragne, alias):
   clean = CleanSheet(alias)
 
   for start_cleaning_date, end_cleaning_date in pairwise(sheet_dates_ragne):
-    
-    if start_cleaning_date == sheet_dates_ragne[-1]:
-       return
     
     table_data_cache = get_id_from_cache(start_cleaning_date)
     

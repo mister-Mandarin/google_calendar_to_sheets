@@ -8,7 +8,6 @@ WEEKDAYS = ['Понедельник', 'Вторник', 'Среда', 'Четв�
 
 import calendar
 from google_calendar.utils import CALENDAR_LIST
-from datetime import datetime
 from dateutil import parser
  
 def get_month_info(month: str):
@@ -26,6 +25,9 @@ def get_count_days(start_day, end_day):
     # Парсим даты с временными зонами
     start = parser.isoparse(start_day)
     end = parser.isoparse(end_day)
+ 
+    if start.year == end.year and start.month == end.month:
+        return end.day - start.day + 1
     
     return (end.date() - start.date()).days
 
@@ -36,4 +38,4 @@ def get_index_column_by_alias(alias):
    """
    for i, cal in enumerate(CALENDAR_LIST):
     if cal['alias'] == alias:
-        return i + 1, i + 2
+        return i + 1, i + 2, cal['colorList']
