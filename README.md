@@ -63,3 +63,8 @@ https://developers.google.com/workspace/calendar/api/guides/performance
 ### Help links sheets
 https://developers.google.com/workspace/sheets/api/reference/rest
 https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets/batchUpdate 
+
+## Bugs/features
+Не создается при первом запуске файл cached_sheets.json
++ Добавить логи при добавлении/очистке и записи календарей
++ Падает check_sheet_id.py", line 36, in get_range_dates raise ValueError("Список items пуст.")

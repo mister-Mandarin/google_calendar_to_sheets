@@ -44,7 +44,7 @@ class CalendarAPI:
             result = comparator.compare_files(new_sync_token)
 
             if result:
-                self.logger.info(f"{self.calendar_data['alias']} не требует синхронизации.")
+                #self.logger.info(f"{self.calendar_data['alias']} не требует синхронизации.")
                 return
             
         #self.logger.info(f"Начинаю синхронизацию календаря {self.calendar_data['alias']}.")
@@ -52,22 +52,22 @@ class CalendarAPI:
 
         file_obj = File()
         file_obj.write_file(self.calendar_data, events_result)
-        self.logger.info(f"События календаря {self.calendar_data['alias']} успешно записаны.")
+        self.logger.info(f"События {self.calendar_data['alias']} записаны в файл.")
 
     def get_full_events(self):
         #self.logger.debug(f"Запрашиваю события с {self.time_min} по {self.time_max}")
         return self.service.events().list(
-        calendarId=self.calendar_data["id"],
-        timeMin=self.time_min,
-        timeMax=self.time_max,
-        maxResults=2500, #!!!!!!
-        singleEvents=True,
-        orderBy="startTime",
-        fields="updated, items(id, start/dateTime, end/dateTime)",
+            calendarId=self.calendar_data["id"],
+            timeMin=self.time_min,
+            timeMax=self.time_max,
+            maxResults=2500, #!!!!!!
+            singleEvents=True,
+            orderBy="startTime",
+            fields="updated, items(id, start/dateTime, end/dateTime)",
         ).execute()
 
     def get_sync_token(self):
-        self.logger.info(f"Запрашиваю токен синхронизации для {self.calendar_data['alias']}.")
+        #self.logger.info(f"Запрашиваю токен синхронизации для {self.calendar_data['alias']}.")
         response_updated = self.service.events().list(
             calendarId=self.calendar_data["id"],
             maxResults=1,

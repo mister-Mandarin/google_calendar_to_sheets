@@ -22,8 +22,7 @@ class AppState:
         self._init_data_dir()
         self._load_sheets_cache()
         self.logger = AppLogger(name="app", log_dir=self.data_dir).get_logger()
-        self.logger.info("__________________________________________________________")
-        self.logger.debug(f"Запуск {self.now}.")
+        self.logger.debug(f"Запуск -> {self.now}")
 
     def _init_services(self):
         auth = Auth()

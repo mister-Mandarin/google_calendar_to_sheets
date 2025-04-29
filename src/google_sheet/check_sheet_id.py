@@ -33,10 +33,11 @@ class CheckSheetId:
 
     def get_range_dates(self):
         if not self.sheet_data:
-            raise ValueError("Список items пуст.")
-
-        start_times = [datetime.fromisoformat(event["start"]) for event in self.sheet_data]
-        end_times = [datetime.fromisoformat(event["end"]) for event in self.sheet_data]
+            start_times = [app_state.now]
+            end_times = [app_state.now + relativedelta(months=2)]
+        else:
+            start_times = [datetime.fromisoformat(event["start"]) for event in self.sheet_data]
+            end_times = [datetime.fromisoformat(event["end"]) for event in self.sheet_data]
 
         earliest = min(start_times)
         latest = max(end_times)
@@ -55,5 +56,6 @@ class CheckSheetId:
         """
         sheet_id = SheetAPI()
 
-        for date in self.sheet_dates_ragne:
-            sheet_id.get_sheet_id(date[:7])
+        if self.sheet_dates_ragne:
+            for date in self.sheet_dates_ragne:
+                sheet_id.get_sheet_id(date[:7])

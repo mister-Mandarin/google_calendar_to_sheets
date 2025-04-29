@@ -97,8 +97,9 @@ class WriteEvent(ConfigSheet):
 
     def write_event_block(self):
 
-        for event in self.sheet_data:
-            self.setup_event_block(event) 
+        if self.sheet_data:
+            for event in self.sheet_data:
+                self.setup_event_block(event) 
 
-        self.run_request()
-        self.reset_requests()
+            self.run_request()
+            self.reset_requests()

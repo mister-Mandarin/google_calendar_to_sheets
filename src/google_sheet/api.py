@@ -41,7 +41,7 @@ class SheetAPI:
         return False
        
     def create_new_sheet(self, month_name):
-        #self.logger.info(f"Создаю новый лист, перезаписываю кэш.")
+        self.logger.info(f"Создаю новый лист {month_name}, перезаписываю кэш.")
         requests = [{
             "addSheet": {
                 "properties": {
