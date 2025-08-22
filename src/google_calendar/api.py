@@ -13,6 +13,7 @@ class CalendarAPI:
         self.time_min, self.time_max = get_datetime()
 
     def exists_calendar(self):
+        self.logger.info(f"self.calendar_data.id {self.calendar_data["id"]}")
         try:
             self.service.calendarList().get(
                 calendarId=self.calendar_data["id"]

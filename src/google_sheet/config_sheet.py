@@ -23,6 +23,7 @@ class ConfigSheet:
         self.requests = []
 
     def run_request(self):
+        #self.logger.info(f"Запрос для таблицы {self.table_id}: {self.requests}.")
         self.service.spreadsheets().batchUpdate(
             spreadsheetId=self.table_id,
             body={"requests": self.requests}
