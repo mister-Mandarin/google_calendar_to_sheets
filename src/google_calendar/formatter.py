@@ -57,6 +57,8 @@ def format_event(raw_events):
         merged_events.append(current_event)
 
     nine_am = time(9, 0, 0)
+    twenty_three_pm = time(23, 0, 0)
+
     # # Конвертируем обратно в строки
     for event in merged_events:
         start_dt = event["start"]
@@ -71,6 +73,10 @@ def format_event(raw_events):
                 # Начало раньше 9:00, конец позже
                 # Устанавливаем начало на 9:00 того же дня
                 start_dt = datetime.combine(start_dt.date(), nine_am, tzinfo=start_dt.tzinfo)
+
+        # Конец позже 22:00 или на следующий день
+        if end_dt.time() > twenty_three_pm or end_dt.date() > start_dt.date():
+            end_dt = datetime.combine(start_dt.date(), twenty_three_pm, tzinfo=end_dt.tzinfo)      
 
         start = start_dt.isoformat()
         end = end_dt.isoformat()
